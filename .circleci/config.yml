@@ -1,25 +1,5 @@
-sudo: required
-services:
-    - docker
-
-run:
-    - docker build -t ericsojohansson/react-test -f ./client/Dockerfile.dev ./client
-    - docker run -e CI=true ericsojohansson/react-test npm test -- --coverage
-    - docker build -t ericsojohansson/multi-client -f ./client
-    - docker build -t ericsojohansson/multi-nginx -f ./nginx
-    - docker build -t ericsojohansson/multi-server -f ./server
-    - docker build -t ericsojohansson/multi-worker -f ./worker
-
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-
-    - docker push ericsojohansson/multi-client
-    - docker push ericsojohansson/multi-nginx
-    - docker push ericsojohansson/multi-server
-    - docker push ericsojohansson/multi-worker
-
-    version: 2
+version: 2
 jobs:
-
     steps:
       - run:
           name: build-client
@@ -30,7 +10,9 @@ jobs:
       - run:
           name: build-containers
           command: docker build -t ericsojohansson/multi-client -f ./client && docker build -t ericsojohansson/multi-nginx -f ./nginx && docker build -t ericsojohansson/multi-server -f ./server && docker build -t ericsojohansson/multi-worker -f ./worker
-
-        - run:
+      - run:
+          name: docker-login
+          command: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+      - run:
         name: push-containers
         command: docker push ericsojohansson/multi-client && docker push ericsojohansson/multi-nginx && docker push ericsojohansson/multi-server && docker push ericsojohansson/multi-worker
