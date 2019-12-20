@@ -3,7 +3,7 @@ jobs:
     steps:
       - run:
           name: build-client
-          command: - docker build -t ericsojohansson/react-test -f ./client/Dockerfile.dev ./client
+          command: docker build -t ericsojohansson/react-test -f ./client/Dockerfile.dev ./client
       - run:
           name: run-test
           command: docker run -e CI=true ericsojohansson/react-test npm test -- --coverage
